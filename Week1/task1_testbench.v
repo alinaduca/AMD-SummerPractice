@@ -1,73 +1,29 @@
-module NOT(A, C);
-input A;
-output C;
-assign C = ~A;
-endmodule
-
-module OR(A, B, C);
-input A, B;
-output C;
-assign C = A | B;
-endmodule
-
-module AND(A, B, C);
-input A, B;
-output C;
-assign C = A & B;
-endmodule
-
-module NAND(A, B, C);
-input A, B;
-output C;
-wire temp1;
-AND a(A, B, temp1);
-assign C = ~temp1;
-endmodule
-
-module XOR(A, B, C);
-input A, B;
-output C;
-wire temp1;
-wire temp2;
-wire n1;
-wire n2;
-NOT not1(A, n1);
-NOT not2(B, n2);
-AND a1(n1, B, temp1);
-AND a2(A, n2, temp2);
-assign C = temp1 | temp2;
-endmodule
-
-module FIG2(A, B, C, Y);
-input A, B, C;
-output Y;
-wire notA;
-wire not1;
-wire not3;
-wire temp1;
-wire temp2;
-wire temp3;
-wire temp4;
-NOT n1(A, notA);
-NAND na1(B, C, temp1);
-AND a1(B, temp1, temp2);
-AND a2(notA, temp2, temp3);
-NOT n2(temp3, not3);
-
-NOT n3(temp1, not1);
-XOR x(temp2, not1, temp4);
-assign Y = not3 | temp4;
-endmodule
-
-module main();
-reg _A, _B, _C;
-wire _Y;
-FIG2 f(_A, _B, _C, _Y);
-initial
-begin
-    $monitor("%d", _Y);
-    _A = 1;
-    _B = 0;
-    _C = 0;
-end
+module task1;
+    reg A, B, C;
+    wire out, Y;
+  	FIG1 f1(.A(A), .B(B), .C(C), .out(out));
+  	FIG2 f2(.A(A), .B(B), .C(C), .Y(Y));  
+    initial begin
+        $dumpfile("dump.vcd");
+        $dumpvars(1);
+        #1 A = 0; B = 0; C = 0;
+        display;
+        #1 A = 0; B = 0; C = 1;
+        display;
+        #1 A = 0; B = 1; C = 0;
+        display;
+        #1 A = 0; B = 1; C = 1;
+        display;
+        #1 A = 1; B = 0; C = 0;
+        display;
+        #1 A = 1; B = 0; C = 1;
+        display;
+        #1 A = 1; B = 1; C = 0;
+        display;
+        #1 A = 1; B = 1; C = 1;
+        display;
+    end
+    task display;
+      #1 $display("A: %0h, B: %0h, C: %0h, out(f1): %0h, Y(f2): %0h", A, B, C, out, Y);
+    endtask
 endmodule
